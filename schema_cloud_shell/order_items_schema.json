@@ -1,0 +1,9 @@
+[
+    {"name": "order_id", "type": "STRING"},
+    {"name": "order_item_id", "type": "INT64"},
+    {"name": "product_id", "type": "STRING"},
+    {"name": "seller_id", "type": "STRING"},
+    {"name": "shipping_limit_date", "type": "DATETIME"},
+    {"name": "price", "type": "FLOAT64"},
+    {"name": "freight_value", "type": "FLOAT64"}
+]

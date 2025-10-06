@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: olist-ecommerce-dw
+    schema: bronze
+    tables:
+      - name: orders
+        identifier: orders
+      - name: customers
+        identifier: customers
+      - name: order_items
+        identifier: order_items
+      - name: order_payments
+        identifier: order_payments
+      - name: products
+        identifier: products
+      - name: sellers
+        identifier: sellers
+      - name: order_reviews
+        identifier: order_reviews
+      - name: geolocation
+        identifier: geolocation
+      - name: product_category_name_translation
+        identifier: product_category_name_translation

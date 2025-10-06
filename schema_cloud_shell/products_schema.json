@@ -1,0 +1,11 @@
+[
+    {"name": "product_id", "type": "STRING"},
+    {"name": "product_category_name", "type": "STRING"},
+    {"name": "product_name_length", "type": "INT64"},
+    {"name": "product_description_length", "type": "INT64"},
+    {"name": "product_photo_qty", "type": "INT64"},
+    {"name": "product_weight_g", "type": "INT64"},
+    {"name": "product_length_cm", "type": "INT64"},
+    {"name": "product_height_cm", "type": "INT64"},
+    {"name": "product_width_cm", "type": "INT64"}
+]

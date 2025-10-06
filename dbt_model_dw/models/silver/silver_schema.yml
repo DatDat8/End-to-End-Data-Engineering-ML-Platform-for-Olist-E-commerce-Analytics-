@@ -1,0 +1,17 @@
+version: 2
+models:
+  - name: denormalized_orders
+    description: "The core denormalized fact table for orders, optimized for BigQuery query performance via nested arrays."
+    columns:
+      - name: order_id
+        description: "Unique identifier for the order (Primary Key)."
+        tests:
+          - unique
+          - not_null
+      - name: order_items_array
+        description: "Nested array (ARRAY<STRUCT>) containing all item details, product dimensions, prices, and freight."
+      - name: payment_match_flag
+        description: "Data quality flag indicating if calculated order cost matches the total recorded payment value."
+        tests:
+          - accepted_values:
+              values: ['Match', 'Discrepancy', 'Missing Payment']

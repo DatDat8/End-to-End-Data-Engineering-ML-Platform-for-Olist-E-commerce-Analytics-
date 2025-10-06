@@ -1,0 +1,6 @@
+[
+    {"name": "seller_id", "type": "STRING"},
+    {"name": "seller_zip_code_prefix", "type": "INT64"},
+    {"name": "seller_city", "type": "STRING"},
+    {"name": "seller_state", "type": "STRING"}
+]

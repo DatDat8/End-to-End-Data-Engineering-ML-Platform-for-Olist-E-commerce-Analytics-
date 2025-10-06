@@ -1,0 +1,7 @@
+[
+  {"name": "customer_id", "type": "STRING"},
+  {"name": "customer_unique_id", "type": "STRING"},
+  {"name": "customer_zip_code_prefix", "type": "INT64"},
+  {"name": "customer_city", "type": "STRING"},
+  {"name": "customer_state", "type": "STRING"}
+]

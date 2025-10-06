@@ -1,0 +1,9 @@
+[
+    {"name": "review_id", "type": "STRING"},
+    {"name": "order_id", "type": "STRING"},
+    {"name": "review_score", "type": "INT64"},
+    {"name": "review_commend_title", "type": "STRING"},
+    {"name": "review_commend_message", "type": "STRING"},
+    {"name": "review_creation_date", "type": "DATETIME"},
+    {"name": "review_creation_timestamp", "type": "DATETIME"}
+]

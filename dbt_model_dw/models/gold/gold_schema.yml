@@ -1,0 +1,387 @@
+version: 2
+
+models:
+  - name: fct_customer_ltv
+    description: "A gold layer fact table detailing customer-level Lifetime Value (LTV) metrics, including historical spend, recency, and heuristic LTV projections."
+    
+    # Configuration defined in the SQL file:
+    # config:
+    #   materialized: table
+    #   schema: gold
+    #   tags: ['fact', 'customer']
+
+    columns:
+      - name: customer_unique_id
+        data_type: STRING
+        description: "The unique identifier for the customer (used across all their orders). This serves as the primary key for the customer dimension."
+        tests:
+          - unique
+          - not_null
+
+      - name: primary_state
+        data_type: STRING
+        description: "The customer's primary state, defined as the state associated with their *first* order."
+        
+      # - name: days_since_first_purchase
+      #   data_type: INT64
+      #   description: "The number of days between the customer's first and last purchase date. Represents the span of their activity."
+      #   tests:
+      #     - not_null
+      #     - dbt_utils.at_least_one:
+      #         expression: ({{ dbt_utils.surrogate_key(['days_since_first_purchase']) }}) != 0
+
+      - name: total_orders
+        data_type: INT64
+        description: "Total count of orders that were successfully 'delivered'."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: total_orders >= 1
+
+      - name: historical_ltv
+        data_type: NUMERIC
+        description: "The customer's **Historical Lifetime Value (LTV)**: the total calculated cost/value of all their successfully delivered orders."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: historical_ltv >= 0
+
+      - name: historical_aov
+        data_type: NUMERIC
+        description: "The customer's **Historical Average Order Value (AOV)**: total historical LTV divided by total orders."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: historical_aov >= 0
+
+      - name: predicted_ltv_6m_heuristic
+        data_type: NUMERIC
+        description: "A simple 6-month projected LTV heuristic based on Historical AOV multiplied by the estimated number of purchases in the next 6 months."
+        tests:
+          - not_null
+
+      - name: historical_profit_contribution
+        data_type: NUMERIC
+        description: "The estimated historical profit contribution, calculated as Historical LTV multiplied by a placeholder Gross Margin (e.g., 25%)."
+        tests:
+          - not_null
+
+  # ====================================================================
+  # NEW MODEL: agg_cohort_retention_product
+  # ====================================================================
+      
+  - name: agg_cohort_retention_product
+    description: "Aggregate table showing customer retention rates, cohorting customers based on the product category of their *very first* purchase."
+    
+    columns:
+      - name: cohort_category_name
+        data_type: STRING
+        description: "The product category associated with the customer's first-ever purchase, used as the defining retention cohort."
+        tests:
+          - not_null
+
+      - name: cohort_month
+        data_type: DATE
+        description: "The month of the customer's first-ever order, used as the time-based retention cohort."
+        tests:
+          - not_null
+
+      - name: month_year
+        data_type: STRING
+        description: "Formatted month and year for display purposes (e.g., 'Jan 2017')."
+        tests:
+          - not_null
+
+      - name: retention_period
+        data_type: INT64
+        description: "The retention period, calculated as the difference (in months) between the purchase month and the cohort month (0 = acquisition month)."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "retention_period >= 0"
+
+      - name: retained_customers
+        data_type: INT64
+        description: "The number of unique customers from the defined cohort who made a purchase in the given retention period."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "retained_customers >= 0"
+
+      - name: initial_cohort_size
+        data_type: INT64
+        description: "The total number of unique customers in the initial cohort (i.e., retained_customers at retention_period = 0)."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "initial_cohort_size >= 1"
+
+      - name: retention_rate
+        data_type: FLOAT64
+        description: "The retention rate for the given period: retained_customers / initial_cohort_size."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "retention_rate >= 0 AND retention_rate <= 1"
+
+  # ====================================================================
+  # NEW MODEL: agg_cohort_retention_all
+  # ====================================================================
+  - name: agg_cohort_retention_all
+    description: "High-level aggregate table showing customer retention rates (all customers), cohorting purely based on the month of their first purchase."
+    
+    columns:
+      - name: cohort_month
+        data_type: DATE
+        description: "The month of the customer's first-ever order, defining the acquisition cohort."
+        tests:
+          - not_null
+
+      - name: month_year
+        data_type: STRING
+        description: "Formatted month and year for display purposes (e.g., 'Jan 2017')."
+        tests:
+          - not_null
+
+      - name: retention_period
+        data_type: INT64
+        description: "The number of months elapsed from the cohort month (0 = acquisition month). Filters for 0-6 months."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "retention_period >= 0"
+
+      - name: retained_customers
+        data_type: INT64
+        description: "The number of unique customers from the defined cohort who made a purchase in the given retention period."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "retained_customers >= 0"
+
+      - name: initial_cohort_size
+        data_type: INT64
+        description: "The total number of unique customers in the initial cohort (retained_customers at retention_period = 0)."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "initial_cohort_size >= 1"
+
+      - name: retention_rate
+        data_type: FLOAT64
+        description: "The overall retention rate for the given period: retained_customers / initial_cohort_size."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "retention_rate >= 0 AND retention_rate <= 1"
+  
+  # ====================================================================
+  # NEW MODEL: agg_payment_behavior
+  # ====================================================================
+  - name: agg_payment_behavior
+    description: "Aggregate table analyzing payment behavior and risk metrics, segmented by payment method, order status, and product category."
+    
+    columns:
+      - name: payment_type
+        data_type: STRING
+        description: "The type of payment used (e.g., Credit Card, Boleto), pulled from the UNNESTed payments array."
+        tests:
+          - not_null
+
+      - name: order_status
+        data_type: STRING
+        description: "The current status of the order (e.g., delivered, shipped, canceled)."
+        tests:
+          - not_null
+
+      - name: product_category
+        data_type: STRING
+        description: "The category of the product item involved in the transaction, pulled from the UNNESTed items array."
+        tests:
+          - not_null
+
+      - name: total_dist_orders
+        data_type: INT64
+        description: "The total count of unique orders for this specific payment/status/category combination."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "total_dist_orders >= 1"
+
+      - name: total_order_items
+        data_type: INT64
+        description: "The total number of order line items/payments (rows in this aggregation). Higher than total_dist_orders if an order has multiple items or payment types."
+        tests:
+          - not_null
+
+      - name: total_gmv
+        data_type: NUMERIC
+        description: "The total Gross Merchandise Value (calculated order cost) for this segment."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "total_gmv >= 0"
+
+      - name: payment_missing_value
+        data_type: NUMERIC
+        description: "The difference between calculated order cost and total payment value. A positive value indicates missing payment, a negative value indicates over-payment/extra payment."
+
+      - name: total_installments
+        data_type: NUMERIC
+        description: "The total number of payment installments across all orders in this segment."
+        tests:
+          - not_null
+
+      - name: mismatch_transactions_count
+        data_type: INT64
+        description: "Count of orders where the `payment_match_flag` was 'Discrepancy' or 'Missing Payment'."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "mismatch_transactions_count >= 0"
+
+      - name: payment_mismatch_rate
+        data_type: FLOAT64
+        description: "The rate of payment mismatch: `mismatch_transactions_count` divided by `total_dist_orders`."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "payment_mismatch_rate >= 0 AND payment_mismatch_rate <= 1"
+
+      - name: total_review_score
+        data_type: NUMERIC
+        description: "The sum of review scores across all orders in this segment. Used for correlating payment issues with customer satisfaction."
+        tests:
+          - not_null
+  
+  # ====================================================================
+  # NEW MODEL: fct_seller_performance
+  # ====================================================================
+  - name: fct_seller_performance
+    description: "Fact table detailing key performance indicators (KPIs) for sellers, segmented by their state and the product category sold."
+    
+    columns:
+      - name: seller_id
+        data_type: STRING
+        description: "The unique identifier of the seller."
+        tests:
+          - not_null
+
+      - name: seller_state
+        data_type: STRING
+        description: "The state where the seller is located."
+
+      - name: product_category
+        data_type: STRING
+        description: "The category of the product item sold, used as a key segmentation dimension."
+        tests:
+          - not_null
+
+      - name: total_order_items_sold
+        data_type: INT64
+        description: "Total number of items sold (or order item rows) by the seller in this segment."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "total_order_items_sold >= 1"
+
+      - name: total_revenue_contribution
+        data_type: NUMERIC
+        description: "Total revenue contributed by the seller for the items in this segment (excluding freight and payment fees)."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "total_revenue_contribution >= 0"
+
+      - name: on_time_delivery_rate
+        data_type: FLOAT64
+        description: "The percentage of orders that were delivered on or before the estimated delivery date."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "on_time_delivery_rate >= 0 AND on_time_delivery_rate <= 1"
+
+      - name: average_review_score
+        data_type: NUMERIC
+        description: "The average review score received for orders involving this seller and product category."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "average_review_score >= 1 AND average_review_score <= 5"
+  
+
+
+  # ====================================================================
+  # NEW MODEL: agg_sales_kpi
+  # ====================================================================
+  - name: agg_sales_kpi
+    description: "Aggregate table summarizing core Sales KPIs and operational performance metrics, segmented by product, order status, payment issues, and customer location."
+    
+    columns:
+      - name: product_category
+        data_type: STRING
+        description: "The category of the product item sold, used as the primary segmentation dimension."
+        tests:
+          - not_null
+
+      - name: order_status
+        data_type: STRING
+        description: "The status of the order (e.g., delivered, shipped, canceled)."
+        tests:
+          - not_null
+
+      - name: payment_match_flag
+        data_type: STRING
+        description: "Flag indicating the status of the cost vs. payment reconciliation ('Match', 'Discrepancy', 'Missing Payment')."
+        tests:
+          - not_null
+
+      - name: customer_state
+        data_type: STRING
+        description: "The state of the customer."
+
+      - name: customer_city
+        data_type: STRING
+        description: "The city of the customer (at the time of the order)."
+
+      - name: total_sales
+        data_type: NUMERIC
+        description: "The total calculated order cost (Gross Merchandise Value - GMV) for this segment."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "total_sales >= 0"
+
+      - name: total_customers
+        data_type: INT64
+        description: "Total number of unique customers who placed orders in this segment."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "total_customers >= 1"
+
+      - name: total_orders
+        data_type: INT64
+        description: "Total number of unique orders in this segment."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "total_orders >= 1"
+
+      - name: total_early_delivery_days
+        data_type: NUMERIC
+        description: "The cumulative sum of `num_early_delivery_days`. Positive value is cumulative days early; negative is cumulative days late."
+
+      - name: total_on_time_delivery
+        data_type: INT64
+        description: "Count of orders that were delivered on or before the estimated delivery date."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "total_on_time_delivery >= 0"
+
+      - name: total_review_score
+        data_type: NUMERIC
+        description: "The cumulative sum of review scores for orders in this segment."
+        tests:
+          - not_null

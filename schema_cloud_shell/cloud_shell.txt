@@ -1,0 +1,17 @@
+gcloud config set project olist-ecommerce-dw
+
+bq load \
+  --source_format=CSV \
+  --skip_leading_rows=1 \
+  --schema=schema/orders_schema.json \
+  bronze.orders_raw \
+  gs://olist-bucket-storage/raw/olist_orders_dataset.csv
+
+
+
+bq load \
+  --source_format=CSV \
+  --skip_leading_rows=1 \
+  --schema=schema/customers_schema.json \
+  bronze.customers \
+  gs://olist-bucket-storage/raw/olist_customers_dataset.csv
