@@ -17,7 +17,7 @@ This layer consists of 9 raw tables ingested directly from Cloud Storage. This s
 ### 2. Silver Layer 🥈
 To resolve this issue, the BigQuery ARRAY is utilized to leverage a nested & denormalized structure followed by each order_id. This allows consolidating all data columns into one while still able to avoid data repetation and redundancy. In particular, 3 arrays were created to specify details in each order of order_items_array, payment_array & sellers_array.
 To prove this enhanced performance, a benchmark was conducted to measure the amount of Billed Bytes and Processed Bytes on Gold Tables between the traditional JOIN jobs from Star-Schema Bronze tables and the ARRAY silver one. The result clearly shows a significant 75% of cost saved by using this Denormalized structure.
-<img width="250" height="300" alt="Bytes Billed Saved" src="https://github.com/user-attachments/assets/9759d27f-1f92-4e57-a20b-3bf77445ed8d" />
+<img width="300" height="350" alt="Bytes Billed Saved" src="https://github.com/user-attachments/assets/9759d27f-1f92-4e57-a20b-3bf77445ed8d" />
 
 For detailed Job test, please enter ./test/benchmark_performance_test.
 
@@ -46,5 +46,5 @@ Using XGBoost Classifier with training weight for an imbalanced dataset (1:116),
 
 **🚀 Project Progress:** This project is ongoing and there're still tasks to be done:
   * Design & Implement 3 PowerBI dashboards titled Total Sales Performance, CLT & Cohort Analysis and Sellers Performance & Payment Behavior
-  * Compare classification models for Churn Prediction & lifetime tracking using MLflow
+  * Compare classification models for Churn Classification and CLV Prediction, with model lifetime tracking using MLflow
   * Automate daily Ingestion jobs using BigQuery API, orchestrate the whole workflow by Dagster
