@@ -17,7 +17,7 @@ This layer consists of 9 raw tables ingested directly from Cloud Storage. This s
 ### 2. Silver Layer 🥈
 To resolve this issue, the BigQuery ARRAY is utilized to leverage a nested & denormalized structure followed by each order_id. This allows consolidating all data columns into one while still able to avoid data repetation and redundancy. In particular, 3 arrays were created to specify details in each order of order_items_array, payment_array & sellers_array.
 
-<img width="360" height="400" alt="Bytes Billed Saved" src="https://github.com/user-attachments/assets/9759d27f-1f92-4e57-a20b-3bf77445ed8d" />
+<img width="433" height="520" alt="Bytes Billed Saved" src="https://github.com/user-attachments/assets/9759d27f-1f92-4e57-a20b-3bf77445ed8d" />
 
 To prove this enhanced performance, a benchmark was conducted to measure the amount of Billed Bytes and Processed Bytes on Gold Tables between the traditional JOIN jobs from Star-Schema Bronze tables and the ARRAY silver one. The result clearly shows a significant 75% of cost saved by using this Denormalized structure.
 For detailed Job test, please enter ./test/benchmark_performance_test.
@@ -41,7 +41,7 @@ The agg_churn_features containing engineering features from customers' behavior 
 
 As can be seen from the feature importance figure, the most impactful features on churn appears mainly on those RFM ones Frequency (num_orders), Recency (days_since_last_purchase) and Monetary (ltv_180d).
 
-<img width="1882" height="730" alt="fi_cm" src="https://github.com/user-attachments/assets/34251c9d-4253-4b3d-adb8-362fbd91337f" />
+<img width="1500" height="582" alt="fi_cm" src="https://github.com/user-attachments/assets/34251c9d-4253-4b3d-adb8-362fbd91337f" />
 
 Using XGBoost Classifier with training weight for an imbalanced dataset (1:116), the F1-score obtained a reliable score of 0.86 for the balance between accuracy and sensitivity (recall). Its Precision-Recall AUC score of 0.98 demonstrates an abnormal performance for a churn prediction, which require a data leakage cause to be tracked.
 
