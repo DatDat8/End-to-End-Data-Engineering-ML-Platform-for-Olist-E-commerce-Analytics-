@@ -8,12 +8,12 @@
 The data was taken from **Brazilian E-Commerce Public Dataset by Olist** then uploaded by raw into Google Cloud Storage data lake.
 Medallion architecture is selected for this Data Warehouse build due to its reliability and data quality enhanced progressively through 3 layers of raw, cleansing, transformation, standardization and business analytics.  
 ### 1. Bronze Layer
-<img width="1868" height="1411" alt="warehouse_bronze" src="https://github.com/user-attachments/assets/96341812-5669-4707-ba4a-c1bc47d42dde" />
+<img width="900" height="900" alt="warehouse_bronze" src="https://github.com/user-attachments/assets/96341812-5669-4707-ba4a-c1bc47d42dde" />
 
 This layer consists of 9 raw tables ingested directly from Cloud Storage. This star schema with dim tables surrounding the order_items fact one could potentially increase the cost for JOIN tasks considerably. This seems negligible for a small dataset of 126.19MB; in reality however, this can become bottleneck when the orderdata scales up day by day.
 
 ### 2. Silver & Gold Layer
-<img width="1043" height="1537" alt="warehouse_silver_gold" src="https://github.com/user-attachments/assets/e5c1c886-83a2-489e-8323-0307fe9f01bb" />
+<img width="800" height="800" alt="warehouse_silver_gold" src="https://github.com/user-attachments/assets/e5c1c886-83a2-489e-8323-0307fe9f01bb" />
 
 To resolve this issue, the BigQuery ARRAY is utilized to leverage a nested & denormalized structure followed by each order_id. This allows consolidating all data columns into one while still able to avoid data repetation and redundancy. In particular, 3 arrays were created to specify details in each order of order_items_array, payment_array & sellers_array.
 
