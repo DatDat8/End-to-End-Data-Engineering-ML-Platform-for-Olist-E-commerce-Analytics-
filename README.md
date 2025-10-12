@@ -34,10 +34,10 @@ To serve SQL analytics & business intelligence on PowerBI purposes, the last lay
 The transformation into silver and gold layer was implemented using dbt which allows robust development, seamless collaboration and version-control deployment for ETL process on cloud. Please enter to ./dbt_model_dw for its detailed development as well as schemas for silver & gold tables. 
 
 ## II. Customer Churn Classification 🛟
-The agg_churn_features containing engineering features from customers' behavior in gold layer is then used to predict churn rate in a 3-month period. A churned customer is defined when he/she doesn't place any orders in this 3-month period. To inspect the causes of this, features are generated mainly based on RFM analysis for using the observation of 180 days backward:
+The agg_churn_features containing engineering features from customers' behavior in gold layer is then used to predict churn rate in a 6-month period. A churned customer is defined when he/she doesn't place any orders in this 3-month period. To inspect the causes of this, features are generated mainly based on RFM analysis for using the observation of 1-year backward:
   * Recency: Days since last purchase/activity in the tracked window
-  * Frequency: Count of of orders in the 180-day lookback window 
-  * Monetary: Sum of LTV in 180 days before the observation date.
+  * Frequency: Count of of orders in the 1-year lookback window 
+  * Monetary: Sum of LTV in 1-year before the observation date.
 
 As can be seen from the feature importance figure, the most impactful features on churn appears mainly on those RFM ones Frequency (num_orders), Recency (days_since_last_purchase) and Monetary (ltv_180d).
 
@@ -48,6 +48,17 @@ As can be seen from the feature importance figure, the most impactful features o
 * Both the Random Forest (0.845) and XGBoost (0.844) models show a strong, nearly identical performance on the PR ROC curve. This suggests that both ensemble methods are robust when dealing with a potentially imbalanced dataset, significantly outperforming the single Decision Tree (0.773).
 
 <img width="600" height="420" alt="roc_metrics" src="https://github.com/user-attachments/assets/6af9915d-efbc-484d-a698-93f357c33653" />
+
+* As can be seen, Random Forest give significant scores over 8 highest scores, while XGBoost has almost idential scores over the majority of the features.
+* Moreover, both models consider recency_days as the most important feature, payment_match_rate and credit_payrate as the most negligible ones. This demonstrates the importance of purchase time-related columns and unimportance of payment behavior ones.
+
+<img width="1215" height="918" alt="image" src="https://github.com/user-attachments/assets/bc2b45c4-ddb5-442f-b4d9-a94b8c365ada" />
+
+* The metrics show a significant improvement in both recall (reached high sensitivity of 0.808) and f1-score (higher harmonic mean of recall and precision of 0.782) of Random Forest after top-5 features selection. 
+* XGBoost can nearly obtain the same performance using up to 8 features, which demonstrates the even weak scores it gives cross the majority of features, as can be shown in the previous plot. 
+* The lower features to be extracted, the lower the cost for training session. This highlights the advantage and performance of Random Forest, and that makes this model officially chosen to resolve Churn Prediction.
+
+
 
 **🚀 Project Progress:** This project is ongoing and there're still tasks to be done:
   * Design & Implement 3 PowerBI dashboards titled Total Sales Performance, CLT & Cohort Analysis and Sellers Performance & Payment Behavior
