@@ -47,7 +47,7 @@ As can be seen from the feature importance figure, the most impactful features o
 * The Random Forest model also achieved the highest scores for both Precision (0.783) and Recall (0.747). This means it is the best at minimizing both false positive (FP) and false negative (FN) predictions simultaneously.
 * Both the Random Forest (0.845) and XGBoost (0.844) models show a strong, nearly identical performance on the PR ROC curve. This suggests that both ensemble methods are robust when dealing with a potentially imbalanced dataset, significantly outperforming the single Decision Tree (0.773).
 
-<img width="1183" height="821" alt="roc_metrics" src="https://github.com/user-attachments/assets/6af9915d-efbc-484d-a698-93f357c33653" />
+<img width="800" height="560" alt="roc_metrics" src="https://github.com/user-attachments/assets/6af9915d-efbc-484d-a698-93f357c33653" />
 
 **🚀 Project Progress:** This project is ongoing and there're still tasks to be done:
   * Design & Implement 3 PowerBI dashboards titled Total Sales Performance, CLT & Cohort Analysis and Sellers Performance & Payment Behavior
