@@ -41,9 +41,13 @@ The agg_churn_features containing engineering features from customers' behavior 
 
 As can be seen from the feature importance figure, the most impactful features on churn appears mainly on those RFM ones Frequency (num_orders), Recency (days_since_last_purchase) and Monetary (ltv_180d).
 
-<img width="1500" height="582" alt="fi_cm" src="https://github.com/user-attachments/assets/34251c9d-4253-4b3d-adb8-362fbd91337f" />
+<img width="1859" height="543" alt="confusion_matrix" src="https://github.com/user-attachments/assets/63f0fdc1-74e9-4734-83e3-985bb037acd3" />
 
-Using XGBoost Classifier with training weight for an imbalanced dataset (1:116), the F1-score obtained a reliable score of 0.86 for the balance between accuracy and sensitivity (recall). Its Precision-Recall AUC score of 0.98 demonstrates an abnormal performance for a churn prediction, which require a data leakage cause to be tracked.
+* As can be seen, the Random Forest model has the highest F1-Score (0.765) and the highest AUC ROC (0.899). This indicates that it provides the best balance of Precision and Recall, and is also the most effective model at correctly separating the positive and negative classes.
+* The Random Forest model also achieved the highest scores for both Precision (0.783) and Recall (0.747). This means it is the best at minimizing both false positive (FP) and false negative (FN) predictions simultaneously.
+* Both the Random Forest (0.845) and XGBoost (0.844) models show a strong, nearly identical performance on the PR ROC curve. This suggests that both ensemble methods are robust when dealing with a potentially imbalanced dataset, significantly outperforming the single Decision Tree (0.773).
+
+<img width="1183" height="821" alt="roc_metrics" src="https://github.com/user-attachments/assets/6af9915d-efbc-484d-a698-93f357c33653" />
 
 **🚀 Project Progress:** This project is ongoing and there're still tasks to be done:
   * Design & Implement 3 PowerBI dashboards titled Total Sales Performance, CLT & Cohort Analysis and Sellers Performance & Payment Behavior
