@@ -29,7 +29,7 @@ To serve SQL analytics & business intelligence on PowerBI purposes, the last lay
   * fct_seller_performance: Seller Performance Tracking.
   * agg_cohort_retention: Cohort Analysis for Customer Retention Rate on a 6-month period.
   * agg_payment_behavoir: Payment Behavior & Installment Type Risk
-  * agg_churn_features: Feature engineering for Churn Prediction model training 
+  * agg_ltv_features: Feature engineering for both Churn Prediction & LTV model training 
 
 The transformation into silver and gold layer was implemented using dbt which allows robust development, seamless collaboration and version-control deployment for ETL process on cloud. Please enter to ./dbt_model_dw for its detailed development as well as schemas for silver & gold tables. 
 
