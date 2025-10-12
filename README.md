@@ -50,7 +50,7 @@ As can be seen from the feature importance figure, the most impactful features o
 <img width="600" height="420" alt="roc_metrics" src="https://github.com/user-attachments/assets/6af9915d-efbc-484d-a698-93f357c33653" />
 
 * Random Forest give significant scores over 8 highest scores, while XGBoost has almost idential scores over the majority of the features.
-* Moreover, both models consider recency_days as the most important feature, payment_match_rate and credit_payrate as the most negligible ones. This demonstrates the importance of purchase time-related columns and unimportance of payment behavior ones.
+* Moreover, both models consider recency_days as the most important feature and payment_match_rate and credit_pay_rate as the most negligible ones. This demonstrates the importance of purchase time-related columns and unimportance of payment behavior ones. This results in a significance of recency, total_orders(frequency), last_purchase_month, review_count, and days_since_first_purchase in predicting churn of this e-commerce platform.
 
 <img width="800" height="576" alt="fi" src="https://github.com/user-attachments/assets/4656c200-845b-4bec-a0f0-3c9f6cc862ff" />
 
