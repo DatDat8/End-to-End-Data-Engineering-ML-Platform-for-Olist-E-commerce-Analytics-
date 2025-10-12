@@ -49,15 +49,14 @@ As can be seen from the feature importance figure, the most impactful features o
 
 <img width="600" height="420" alt="roc_metrics" src="https://github.com/user-attachments/assets/6af9915d-efbc-484d-a698-93f357c33653" />
 
-* As can be seen, Random Forest give significant scores over 8 highest scores, while XGBoost has almost idential scores over the majority of the features.
+* Random Forest give significant scores over 8 highest scores, while XGBoost has almost idential scores over the majority of the features.
 * Moreover, both models consider recency_days as the most important feature, payment_match_rate and credit_payrate as the most negligible ones. This demonstrates the importance of purchase time-related columns and unimportance of payment behavior ones.
 
-<img width="1215" height="918" alt="image" src="https://github.com/user-attachments/assets/bc2b45c4-ddb5-442f-b4d9-a94b8c365ada" />
+<img width="800" height="576" alt="fi" src="https://github.com/user-attachments/assets/4656c200-845b-4bec-a0f0-3c9f6cc862ff" />
 
 * The metrics show a significant improvement in both recall (reached high sensitivity of 0.808) and f1-score (higher harmonic mean of recall and precision of 0.782) of Random Forest after top-5 features selection. 
 * XGBoost can nearly obtain the same performance using up to 8 features, which demonstrates the even weak scores it gives cross the majority of features, as can be shown in the previous plot. 
 * The lower features to be extracted, the lower the cost for training session. This highlights the advantage and performance of Random Forest, and that makes this model officially chosen to resolve Churn Prediction.
-
 
 
 **🚀 Project Progress:** This project is ongoing and there're still tasks to be done:
