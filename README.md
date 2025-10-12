@@ -52,7 +52,7 @@ As can be seen from the feature importance figure, the most impactful features o
 * Random Forest give significant scores over 8 highest scores, while XGBoost has almost idential scores over the majority of the features.
 * Moreover, both models consider recency_days as the most important feature and payment_match_rate and credit_pay_rate as the most negligible ones. This demonstrates the importance of purchase time-related columns and unimportance of payment behavior ones. This results in a significance of recency, total_orders(frequency), last_purchase_month, review_count, and days_since_first_purchase in predicting churn of this e-commerce platform.
 
-<img width="800" height="576" alt="fi" src="https://github.com/user-attachments/assets/4656c200-845b-4bec-a0f0-3c9f6cc862ff" />
+<img width="800" height="576" alt="fi" src="https://github.com/user-attachments/assets/5891b95a-a3cd-43d2-896b-b8791c400257" />
 
 * The metrics show a significant improvement in both recall (reached high sensitivity of 0.808) and f1-score (higher harmonic mean of recall and precision of 0.782) of Random Forest after top-5 features selection. 
 * XGBoost can nearly obtain the same performance using up to 8 features, which demonstrates the even weak scores it gives cross the majority of features, as can be shown in the previous plot. 
